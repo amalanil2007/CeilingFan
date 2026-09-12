@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🌀 Ceiling Fan Simulator - The Most Unnecessary Fan on the Internet</title>
+  <meta name="description" content="A complete, polished, and humorously over-engineered virtual ceiling fan simulator. Operate the fan, adjust speeds, toggle the light, and unlock silly achievements.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="lights-on">
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-titles">
+        <h1 class="main-title"><span class="title-icon">🌀</span> CEILING FAN SIMULATOR</h1>
+        <p class="subtitle">“The most unnecessary fan on the internet.”</p>
+      </div>
+      <div class="header-actions">
+        <button id="btn-trophy" class="action-btn" title="Achievements" aria-label="View Achievements">
+          <span class="btn-icon">🏆</span>
+          <span id="achievement-count" class="badge">0/8</span>
+        </button>
+        <button id="btn-mute" class="action-btn" title="Toggle Sound" aria-label="Toggle Sound">
+          🔊 <span class="btn-label">Sound</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Room / Ceiling Viewport -->
+    <main id="room-container" class="room-lights-on">
+      <!-- Ceiling Texture & Radial Lighting Glows -->
+      <div class="ceiling-texture"></div>
+      <div id="light-aura" class="light-aura"></div>
+
+      <!-- TURBO Warning Alert -->
+      <div id="overkill-banner" class="overkill-banner">
+        ⚠️ MAXIMUM OVERKILL MODE ENGAGED ⚠️
+      </div>
+
+      <!-- Wind Streak Canvas Overlay -->
+      <canvas id="wind-canvas"></canvas>
+
+      <!-- Fan SVG Representation -->
+      <div class="fan-wrapper">
+        <svg id="fan-svg" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Drop Shadow Filter for Ceiling Depth -->
+            <filter id="ceiling-shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="rgba(0,0,0,0.45)" />
+            </filter>
+
+            <!-- Blade Soft Blur for Rotational Cast Shadow -->
+            <filter id="blade-shadow-filter" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="14" />
+            </filter>
+
+            <!-- Dynamic Rotational Motion Blur -->
+            <filter id="blade-motion-filter" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur id="blade-blur-filter" stdDeviation="0 0" />
+            </filter>
+
+            <!-- Rich Walnut Woodgrain Blade Gradients -->
+            <linearGradient id="wood-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#4a2511" />
+              <stop offset="35%" stop-color="#6e371a" />
+              <stop offset="70%" stop-color="#552913" />
+              <stop offset="100%" stop-color="#3d1c0b" />
+            </linearGradient>
+
+            <linearGradient id="wood-highlight" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.22)" />
+              <stop offset="15%" stop-color="rgba(255,255,255,0.06)" />
+              <stop offset="85%" stop-color="rgba(0,0,0,0.15)" />
+              <stop offset="100%" stop-color="rgba(0,0,0,0.4)" />
+            </linearGradient>
+
+            <!-- Brushed Nickel & Antique Brass Motor Finish -->
+            <radialGradient id="motor-rim" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#2a2e33" />
+              <stop offset="70%" stop-color="#1b1e22" />
+              <stop offset="92%" stop-color="#b5904d" />
+              <stop offset="100%" stop-color="#806229" />
+            </radialGradient>
+
+            <radialGradient id="motor-core" cx="45%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#4f545a" />
+              <stop offset="60%" stop-color="#2a2e34" />
+              <stop offset="90%" stop-color="#191c20" />
+              <stop offset="100%" stop-color="#0e1012" />
+            </radialGradient>
+
+            <!-- Golden Brass Blade Irons (Brackets) -->
+            <linearGradient id="brass-grad" x1="0%" y1="0%" x2="100%" y2="50%">
+              <stop offset="0%" stop-color="#f5d77f" />
+              <stop offset="40%" stop-color="#c99c3e" />
+              <stop offset="80%" stop-color="#8a631c" />
+              <stop offset="100%" stop-color="#caa042" />
+            </linearGradient>
+
+            <!-- Frosted Light Dome Gradient (Light ON) -->
+            <radialGradient id="light-glass-on" cx="48%" cy="45%" r="55%">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="35%" stop-color="#fff8e7" />
+              <stop offset="70%" stop-color="#ffd573" />
+              <stop offset="95%" stop-color="#e8a838" />
+              <stop offset="100%" stop-color="#a46d18" />
+            </radialGradient>
+
+            <!-- Frosted Light Dome Gradient (Light OFF) -->
+            <radialGradient id="light-glass-off" cx="45%" cy="45%" r="55%">
+              <stop offset="0%" stop-color="#eceff1" />
+              <stop offset="60%" stop-color="#b0bec5" />
+              <stop offset="85%" stop-color="#78909c" />
+              <stop offset="100%" stop-color="#546e7a" />
+            </radialGradient>
+
+            <!-- Explosion Blast Fire Gradient -->
+            <radialGradient id="fire-grad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="25%" stop-color="#ffff00" />
+              <stop offset="60%" stop-color="#ff3b30" />
+              <stop offset="100%" stop-color="#8a0000" />
+            </radialGradient>
+
+            <!-- Reusable Single Fan Blade Template -->
+            <g id="blade-unit">
+              <!-- Blade Shadow Bevel -->
+              <path d="M 384,330 C 378,250 365,110 380,50 C 388,25 412,25 420,50 C 435,110 422,250 416,330 Z" 
+                    fill="url(#wood-grad)" />
+              <path d="M 384,330 C 378,250 365,110 380,50 C 388,25 412,25 420,50 C 435,110 422,250 416,330 Z" 
+                    fill="url(#wood-highlight)" />
+              <!-- Outer edge rim tip highlight -->
+              <path d="M 378,65 C 385,38 415,38 422,65" 
+                    fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" />
+              
+              <!-- Blade Iron Mounting Bracket (Brass) -->
+              <path d="M 386,345 L 388,290 C 388,285 412,285 412,290 L 414,345 Z" 
+                    fill="url(#brass-grad)" />
+              <!-- Mounting Screws -->
+              <circle cx="393" cy="296" r="3" fill="#ffe082" stroke="#5d4017" stroke-width="1" />
+              <circle cx="407" cy="296" r="3" fill="#ffe082" stroke="#5d4017" stroke-width="1" />
+              <circle cx="400" cy="320" r="3.5" fill="#ffe082" stroke="#5d4017" stroke-width="1" />
+
+              <!-- Blade Addressable LED Light Strip -->
+              <g class="blade-led-strip">
+                <path d="M 400,280 L 400,80" class="led-strip-channel" stroke="rgba(0,0,0,0.4)" stroke-width="4" stroke-linecap="round" />
+                <path d="M 400,280 L 400,80" class="led-strip-glow" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <circle cx="400" cy="90" r="3.5" class="fan-led-node node-1" />
+                <circle cx="400" cy="125" r="3.8" class="fan-led-node node-2" />
+                <circle cx="400" cy="160" r="4.0" class="fan-led-node node-3" />
+                <circle cx="400" cy="195" r="4.2" class="fan-led-node node-4" />
+                <circle cx="400" cy="230" r="4.4" class="fan-led-node node-5" />
+                <circle cx="400" cy="265" r="4.6" class="fan-led-node node-6" />
+              </g>
+            </g>
+
+            <!-- Reusable Blade Silhouette for Shadows -->
+            <g id="blade-shadow-unit">
+              <path d="M 384,330 C 378,250 365,110 380,50 C 388,25 412,25 420,50 C 435,110 422,250 416,330 Z" 
+                    fill="#000000" />
+            </g>
+          </defs>
+
+          <!-- 1. Ceiling Rosette / Medallion -->
+          <circle cx="400" cy="400" r="230" class="ceiling-rosette" />
+          <circle cx="400" cy="400" r="190" class="ceiling-rosette-inner" />
+
+          <!-- 2. Rotating Blade Cast Shadows on Ceiling -->
+          <g id="blade-shadows" filter="url(#blade-shadow-filter)" opacity="0.32">
+            <use href="#blade-shadow-unit" transform="rotate(0 400 400)" />
+            <use href="#blade-shadow-unit" transform="rotate(72 400 400)" />
+            <use href="#blade-shadow-unit" transform="rotate(144 400 400)" />
+            <use href="#blade-shadow-unit" transform="rotate(216 400 400)" />
+            <use href="#blade-shadow-unit" transform="rotate(288 400 400)" />
+          </g>
+
+          <!-- 3. Rotating Blade Assembly (5 Blades with individual pieces for explosion ejection) -->
+          <g id="blade-assembly" filter="url(#blade-motion-filter)">
+            <g id="blade-w-0" class="blade-piece"><use href="#blade-unit" transform="rotate(0 400 400)" /></g>
+            <g id="blade-w-1" class="blade-piece"><use href="#blade-unit" transform="rotate(72 400 400)" /></g>
+            <g id="blade-w-2" class="blade-piece"><use href="#blade-unit" transform="rotate(144 400 400)" /></g>
+            <g id="blade-w-3" class="blade-piece"><use href="#blade-unit" transform="rotate(216 400 400)" /></g>
+            <g id="blade-w-4" class="blade-piece"><use href="#blade-unit" transform="rotate(288 400 400)" /></g>
+          </g>
+
+          <!-- 4. Central Stationary Motor Housing -->
+          <g id="motor-housing" filter="url(#ceiling-shadow)">
+            <!-- Outer Halo Ring of LEDs around motor perimeter -->
+            <g id="motor-led-halo" class="motor-led-halo">
+              <circle cx="400" cy="316" r="4" class="halo-led" />
+              <circle cx="442" cy="327" r="4" class="halo-led" />
+              <circle cx="473" cy="358" r="4" class="halo-led" />
+              <circle cx="484" cy="400" r="4" class="halo-led" />
+              <circle cx="473" cy="442" r="4" class="halo-led" />
+              <circle cx="442" cy="473" r="4" class="halo-led" />
+              <circle cx="400" cy="484" r="4" class="halo-led" />
+              <circle cx="358" cy="473" r="4" class="halo-led" />
+              <circle cx="327" cy="442" r="4" class="halo-led" />
+              <circle cx="316" cy="400" r="4" class="halo-led" />
+              <circle cx="327" cy="358" r="4" class="halo-led" />
+              <circle cx="358" cy="327" r="4" class="halo-led" />
+            </g>
+
+            <!-- Outer Motor Ring -->
+            <circle cx="400" cy="400" r="74" fill="url(#motor-rim)" stroke="#111316" stroke-width="4" />
+            
+            <!-- Radial Ventilation Slits -->
+            <g stroke="#0f1113" stroke-width="3" stroke-linecap="round" opacity="0.75">
+              <line x1="400" y1="334" x2="400" y2="344" />
+              <line x1="447" y1="353" x2="440" y2="360" />
+              <line x1="466" y1="400" x2="456" y2="400" />
+              <line x1="447" y1="447" x2="440" y2="440" />
+              <line x1="400" y1="466" x2="400" y2="456" />
+              <line x1="353" y1="447" x2="360" y2="440" />
+              <line x1="334" y1="400" x2="344" y2="400" />
+              <line x1="353" y1="353" x2="360" y2="360" />
+            </g>
+
+            <!-- Inner Motor Hub Core -->
+            <circle cx="400" cy="400" r="56" fill="url(#motor-core)" stroke="#caa042" stroke-width="2.5" />
+            
+            <!-- Brass Finial Ring -->
+            <circle cx="400" cy="400" r="44" fill="none" stroke="url(#brass-grad)" stroke-width="3" />
+
+            <!-- Frosted Glass Light Bowl Fixture -->
+            <circle id="light-dome" cx="400" cy="400" r="40" class="light-dome" />
+            <circle cx="400" cy="400" r="14" class="light-core" />
+
+            <!-- Scorched Broken Motor Core Overlay (active on explosion) -->
+            <g id="scorched-motor" class="scorched-motor hidden">
+              <circle cx="400" cy="400" r="58" fill="#141416" stroke="#ff3b30" stroke-width="3" stroke-dasharray="6, 4" />
+              <path d="M 368,368 L 396,400 L 434,378 M 396,400 L 378,436 M 396,400 L 428,426" stroke="#ff8533" stroke-width="2.8" stroke-linecap="round" />
+              <path d="M 355,385 Q 335,365 325,395" stroke="#ff3b30" stroke-width="2" fill="none" />
+              <path d="M 425,420 Q 455,445 445,465" stroke="#ffd700" stroke-width="2" fill="none" />
+              <text x="400" y="405" text-anchor="middle" font-size="10" font-weight="900" fill="#ff3b30" font-family="'JetBrains Mono', monospace">DESTROYED</text>
+            </g>
+          </g>
+
+          <!-- Explosion Burst Graphics -->
+          <g id="explosion-fx" class="explosion-fx hidden">
+            <circle cx="400" cy="400" r="140" class="fx-shockwave" fill="rgba(255, 100, 0, 0.35)" stroke="#ff3b30" stroke-width="8" />
+            <polygon points="400,210 440,310 550,300 470,380 540,480 430,460 390,570 350,460 240,480 310,380 230,300 340,310" class="fx-blast-fire" fill="url(#fire-grad)" filter="drop-shadow(0 0 25px #ff3b30)" />
+            <circle cx="400" cy="400" r="75" class="fx-blast-core" fill="#ffffff" filter="drop-shadow(0 0 15px #ffff00)" />
+          </g>
+        </svg>
+
+        <!-- Hanging Interactive Pull-Chains -->
+        <div class="pull-chain-container">
+          <!-- Left Chain: Speed Cycle -->
+          <div id="chain-speed" class="pull-chain" title="Pull to change speed">
+            <div class="chain-cord">
+              <span class="bead"></span><span class="bead"></span><span class="bead"></span>
+              <span class="bead"></span><span class="bead"></span><span class="bead"></span>
+              <span class="bead"></span><span class="bead"></span><span class="bead"></span>
+            </div>
+            <div class="fob fob-fan">
+              <span>🌀</span>
+            </div>
+            <span class="chain-tag">Speed</span>
+          </div>
+
+          <!-- Right Chain: Light Toggle -->
+          <div id="chain-light" class="pull-chain" title="Pull to toggle light">
+            <div class="chain-cord">
+              <span class="bead"></span><span class="bead"></span><span class="bead"></span>
+              <span class="bead"></span><span class="bead"></span><span class="bead"></span>
+              <span class="bead"></span><span class="bead"></span><span class="bead"></span>
+            </div>
+            <div class="fob fob-light">
+              <span>💡</span>
+            </div>
+            <span class="chain-tag">Light</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Funny Floating Quote / Thought Ticker -->
+      <div class="ticker-wrapper">
+        <div class="ticker-bubble">
+          <span class="ticker-badge">FAN THOUGHTS</span>
+          <p id="ticker-text" class="ticker-text">The fan is dormant. The room awaits your command.</p>
+        </div>
+      </div>
+
+      <!-- Explosion Flash Effect -->
+      <div id="explosion-flash" class="explosion-flash"></div>
+
+      <!-- Explosion & Meltdown Repair Banner -->
+      <div id="repair-banner" class="repair-banner hidden">
+        <div class="repair-card">
+          <div class="repair-icon">💥</div>
+          <h2 class="repair-title">THERMODYNAMIC MELTDOWN!</h2>
+          <p class="repair-subtitle">Continuous TURBO speed for &gt;30 seconds exceeded the physical limits of virtual ventilation. The motor exploded and the fan blades were violently ejected across the room!</p>
+          <button id="btn-repair" class="btn-repair">
+            <span class="repair-wrench">🛠️</span>
+            <span>REASSEMBLE & REPAIR FAN</span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Glassmorphic Control Dashboard -->
+    <footer class="control-panel">
+      <!-- Live Metrics Display -->
+      <div class="meters-row">
+        <div class="meter-card">
+          <span class="meter-label">FAN SPEED</span>
+          <div class="meter-value-wrap">
+            <span id="rpm-val" class="meter-number">0</span>
+            <span class="meter-unit">RPM</span>
+          </div>
+        </div>
+
+        <div class="meter-card">
+          <span class="meter-label">POWER CONSUMPTION</span>
+          <div class="meter-value-wrap">
+            <span id="watt-val" class="meter-number">0</span>
+            <span class="meter-unit">W</span>
+          </div>
+        </div>
+
+        <div class="meter-card">
+          <span class="meter-label">FAN RUNNING TIME</span>
+          <div class="meter-value-wrap">
+            <span id="session-time" class="meter-number mono">00:00</span>
+          </div>
+        </div>
+
+        <!-- Heat Indicator / Thermometer Gauge Slot -->
+        <div class="meter-card meter-temp-card" id="temp-meter-card">
+          <span class="meter-label">MOTOR HEAT</span>
+          <div class="meter-value-wrap">
+            <span id="temp-val" class="meter-number">24</span>
+            <span class="meter-unit">°C</span>
+          </div>
+          <!-- Gauge Thermometer Bar -->
+          <div class="thermometer-track" title="Motor Temperature Gauge">
+            <div id="thermometer-fill" class="thermometer-fill" style="width: 15%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Controls -->
+      <div class="controls-main">
+        <!-- Action Row: Power, Light, Reset -->
+        <div class="control-group buttons-secondary">
+          <button id="btn-power" class="btn-ctrl btn-power" title="Toggle Power (Space)">
+            <span class="power-icon">⏻</span>
+            <span class="btn-label">POWER</span>
+          </button>
+
+          <button id="btn-light" class="btn-ctrl btn-light active" title="Toggle Light (L)">
+            <span class="btn-icon">💡</span>
+            <span class="btn-label">Light ON</span>
+          </button>
+
+          <button id="btn-reset" class="btn-ctrl btn-reset" title="Reset Current Session">
+            <span class="btn-icon">↺</span>
+            <span class="btn-label">Reset</span>
+          </button>
+        </div>
+
+        <!-- LED Mood & Blade Underglow Lighting Modes -->
+        <div class="control-group buttons-led">
+          <span class="led-control-label">LED MOOD:</span>
+          <div class="led-presets">
+            <button class="led-pill active" data-led="warm" title="Warm Amber Glow">🟡 Warm</button>
+            <button class="led-pill" data-led="cool" title="Cool Daylight Blue">❄️ Cool</button>
+            <button class="led-pill" data-led="cyber" title="Cyberpunk Neon Cyan & Pink">⚡ Cyber</button>
+            <button class="led-pill rgb-pill" data-led="rgb" title="Chroma RGB Rainbow Wave">🌈 RGB Wave</button>
+            <button class="led-pill" data-led="off" title="Turn Off LEDs">❌ Off</button>
+          </div>
+        </div>
+
+        <!-- Speed Controls: Step Down, Presets, Step Up -->
+        <div class="control-group buttons-primary">
+          <button id="btn-speed-down" class="btn-ctrl btn-step" title="Decrease Speed (↓)">
+            <span>−</span>
+          </button>
+
+          <!-- Quick Preset Pills -->
+          <div class="speed-presets">
+            <button class="speed-pill active" data-speed="0">OFF</button>
+            <button class="speed-pill" data-speed="1">LOW</button>
+            <button class="speed-pill" data-speed="2">MED</button>
+            <button class="speed-pill" data-speed="3">HIGH</button>
+            <button class="speed-pill turbo-pill" data-speed="4">TURBO</button>
+          </div>
+
+          <button id="btn-speed-up" class="btn-ctrl btn-step" title="Increase Speed (↑)">
+            <span>+</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Footer Acknowledgement & Lifetime Stat -->
+      <div class="panel-footer">
+        <p class="useless-quote">“Thank you for using the world’s most unnecessary ceiling fan simulator.”</p>
+        <div class="total-runtime">
+          <span>Total Fan Runtime:</span>
+          <strong id="total-time">00:00</strong>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Toast Notification Container for Silly Achievements -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Achievements Modal Drawer -->
+    <div id="achievement-modal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>🏆 Silly Achievements</h2>
+          <button id="modal-close" class="modal-close-btn" aria-label="Close modal">×</button>
+        </div>
+        <p class="modal-subtitle">Track your meaningless dedication to virtual ventilation.</p>
+        <div id="achievements-list" class="achievements-list">
+          <!-- Dynamically filled by game.js -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="audio.js"></script>
+  <script src="fan.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

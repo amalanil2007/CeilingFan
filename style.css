@@ -1,0 +1,1587 @@
+/* ==========================================================================
+   Ceiling Fan Simulator - Modern, Polished & Over-Engineered Stylesheet
+   ========================================================================== */
+
+:root {
+  --primary-accent: #00e5ff;
+  --turbo-accent: #ff3b30;
+  --turbo-glow: rgba(255, 59, 48, 0.45);
+  --gold-accent: #ffd700;
+  --panel-bg: rgba(18, 22, 28, 0.78);
+  --panel-border: rgba(255, 255, 255, 0.12);
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --text-main: #f0f3f6;
+  --text-muted: #9ba3af;
+  --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.35);
+  --radius-pill: 9999px;
+  --radius-card: 16px;
+  --trans-smooth: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-main);
+  background-color: #0b0d11;
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Base App Layout */
+#app {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   1. Header
+   ========================================================================== */
+.app-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: linear-gradient(180deg, rgba(10, 12, 16, 0.85) 0%, rgba(10, 12, 16, 0) 100%);
+  pointer-events: none;
+}
+
+.header-titles {
+  pointer-events: auto;
+}
+
+.main-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.title-icon {
+  display: inline-block;
+  animation: slow-spin 20s linear infinite;
+}
+
+@keyframes slow-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+  font-weight: 400;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--panel-border);
+  color: var(--text-main);
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: var(--trans-smooth);
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.action-btn:active {
+  transform: translateY(1px);
+}
+
+.action-btn.muted {
+  background: rgba(255, 59, 48, 0.15);
+  border-color: rgba(255, 59, 48, 0.3);
+  color: #ff8e88;
+}
+
+.badge {
+  background: rgba(255, 215, 0, 0.22);
+  color: #ffe066;
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   2. Room & Ceiling Environment
+   ========================================================================== */
+#room-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: background-color 0.8s ease, filter 0.8s ease;
+}
+
+/* Ceiling Plaster Texture & Lighting Gradients */
+.ceiling-texture {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle at center, transparent 35%, rgba(0, 0, 0, 0.4) 100%),
+    radial-gradient(#ffffff 0.7px, transparent 0.7px);
+  background-size: 100% 100%, 28px 28px;
+  opacity: 0.25;
+}
+
+/* State: Light ON */
+.lights-on #room-container {
+  background: radial-gradient(circle at 50% 46%, #eae4d8 0%, #d8cfc0 45%, #b2a897 85%, #8c8273 100%);
+}
+
+.lights-on .ceiling-rosette {
+  fill: #ede8df;
+  stroke: rgba(255, 255, 255, 0.5);
+  stroke-width: 3;
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.14));
+}
+
+.lights-on .ceiling-rosette-inner {
+  fill: #e0d9cd;
+  stroke: rgba(0, 0, 0, 0.08);
+  stroke-width: 2;
+}
+
+.lights-on .light-aura {
+  position: absolute;
+  width: 700px;
+  height: 700px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -54%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 245, 205, 0.65) 0%, rgba(255, 215, 120, 0.28) 40%, rgba(255, 215, 120, 0) 70%);
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.lights-on .light-dome {
+  fill: url(#light-glass-on);
+  filter: drop-shadow(0 0 20px rgba(255, 220, 100, 0.95)) drop-shadow(0 0 45px rgba(255, 180, 50, 0.6));
+}
+
+.lights-on .light-core {
+  fill: #ffffff;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 10px #ffffff);
+}
+
+/* State: Light OFF */
+.lights-off #room-container {
+  background: radial-gradient(circle at 50% 46%, #191e28 0%, #10141d 50%, #090b10 100%);
+}
+
+.lights-off .ceiling-rosette {
+  fill: #151a24;
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 2;
+  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.6));
+}
+
+.lights-off .ceiling-rosette-inner {
+  fill: #11151e;
+  stroke: rgba(0, 0, 0, 0.4);
+  stroke-width: 2;
+}
+
+.lights-off .light-aura {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lights-off .light-dome {
+  fill: url(#light-glass-off);
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+}
+
+.lights-off .light-core {
+  fill: #78909c;
+  opacity: 0.4;
+}
+
+.lights-off #blade-shadows {
+  opacity: 0.12 !important;
+}
+
+/* ==========================================================================
+   LED Mood Lighting & Blade Underglow
+   ========================================================================== */
+.blade-led-strip {
+  transition: opacity 0.4s ease;
+}
+
+.fan-led-node, .halo-led {
+  transition: fill 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
+}
+
+.led-strip-glow {
+  transition: stroke 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
+}
+
+/* Warm Amber LED Mode (Default) */
+.led-warm .fan-led-node {
+  fill: #ffe082;
+  filter: drop-shadow(0 0 6px #ffb300) drop-shadow(0 0 12px #ff8f00);
+}
+.led-warm .halo-led {
+  fill: #ffd54f;
+  filter: drop-shadow(0 0 5px #ffa000);
+}
+.led-warm .led-strip-glow {
+  stroke: rgba(255, 200, 80, 0.7);
+  filter: drop-shadow(0 0 4px #ffa000);
+}
+
+/* Cool Daylight Ice Blue LED Mode */
+.led-cool .fan-led-node {
+  fill: #e0f7fa;
+  filter: drop-shadow(0 0 6px #00e5ff) drop-shadow(0 0 14px #00b0ff);
+}
+.led-cool .halo-led {
+  fill: #80d8ff;
+  filter: drop-shadow(0 0 5px #0091ea);
+}
+.led-cool .led-strip-glow {
+  stroke: rgba(0, 229, 255, 0.75);
+  filter: drop-shadow(0 0 4px #00e5ff);
+}
+.led-cool .light-aura {
+  background: radial-gradient(circle, rgba(160, 240, 255, 0.55) 0%, rgba(0, 220, 255, 0.22) 40%, rgba(0, 220, 255, 0) 70%) !important;
+}
+
+/* Cyberpunk Neon Cyan & Pink LED Mode */
+.led-cyber .fan-led-node:nth-child(even) {
+  fill: #ff007f;
+  filter: drop-shadow(0 0 7px #ff007f) drop-shadow(0 0 16px #c51162);
+}
+.led-cyber .fan-led-node:nth-child(odd) {
+  fill: #00f0ff;
+  filter: drop-shadow(0 0 7px #00f0ff) drop-shadow(0 0 16px #00b0ff);
+}
+.led-cyber .halo-led {
+  fill: #e040fb;
+  filter: drop-shadow(0 0 6px #d500f9);
+}
+.led-cyber .led-strip-glow {
+  stroke: rgba(255, 0, 150, 0.75);
+  filter: drop-shadow(0 0 5px #00f0ff);
+}
+.led-cyber .light-aura {
+  background: radial-gradient(circle, rgba(255, 0, 150, 0.45) 0%, rgba(0, 240, 255, 0.25) 45%, rgba(0, 0, 0, 0) 75%) !important;
+}
+
+/* Chroma RGB Rainbow Wave LED Mode */
+@keyframes rainbow-glow {
+  0% { filter: hue-rotate(0deg) drop-shadow(0 0 8px #ff0055); fill: #ff0055; }
+  33% { filter: hue-rotate(120deg) drop-shadow(0 0 8px #00ff66); fill: #00ff66; }
+  66% { filter: hue-rotate(240deg) drop-shadow(0 0 8px #0066ff); fill: #0066ff; }
+  100% { filter: hue-rotate(360deg) drop-shadow(0 0 8px #ff0055); fill: #ff0055; }
+}
+
+@keyframes rainbow-halo {
+  0% { fill: #ff0055; filter: drop-shadow(0 0 6px #ff0055); }
+  25% { fill: #ffaa00; filter: drop-shadow(0 0 6px #ffaa00); }
+  50% { fill: #00ffcc; filter: drop-shadow(0 0 6px #00ffcc); }
+  75% { fill: #aa00ff; filter: drop-shadow(0 0 6px #aa00ff); }
+  100% { fill: #ff0055; filter: drop-shadow(0 0 6px #ff0055); }
+}
+
+.led-rgb .fan-led-node {
+  animation: rainbow-glow 3s linear infinite;
+}
+.led-rgb .halo-led {
+  animation: rainbow-halo 3s linear infinite;
+}
+.led-rgb .led-strip-glow {
+  stroke: #ff00aa;
+  animation: rainbow-glow 3s linear infinite;
+}
+.led-rgb .light-aura {
+  background: radial-gradient(circle, rgba(255, 0, 128, 0.4) 0%, rgba(0, 220, 255, 0.22) 40%, rgba(128, 0, 255, 0.15) 60%, rgba(0, 0, 0, 0) 75%) !important;
+  animation: rainbow-aura 5s linear infinite;
+}
+@keyframes rainbow-aura {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+/* LED Off Mode */
+.led-off .fan-led-node, .led-off .halo-led {
+  fill: #374151;
+  filter: none;
+  opacity: 0.28;
+}
+.led-off .led-strip-glow {
+  opacity: 0;
+}
+
+/* TURBO Screen Shake Animation */
+.turbo-shake {
+  animation: camera-shake 0.08s infinite alternate ease-in-out;
+}
+
+@keyframes camera-shake {
+  0% { transform: translate(-1.8px, -1.2px) rotate(-0.15deg); }
+  50% { transform: translate(1.4px, 1.6px) rotate(0.12deg); }
+  100% { transform: translate(-0.8px, 1.2px) rotate(-0.08deg); }
+}
+
+/* ==========================================================================
+   DYNAMIC EXPLOSION & BLADE EJECTION SYSTEM
+   ========================================================================== */
+.explosion-flash {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 60;
+  transition: opacity 0.05s ease-out;
+}
+
+.explosion-flash.active {
+  animation: flash-burst 0.9s forwards ease-out;
+}
+
+@keyframes flash-burst {
+  0% { opacity: 0.98; background: #ffffff; }
+  15% { opacity: 0.92; background: #ffaa00; }
+  45% { opacity: 0.55; background: #ff3300; }
+  100% { opacity: 0; background: transparent; }
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Blade Piece Ejection Keyframes (Leaves fly off to their relevant sides) */
+.blade-piece {
+  transform-box: view-box;
+  transform-origin: 400px 400px;
+  transition: transform 0.2s ease;
+}
+
+.blade-piece.ejected-0 {
+  animation: fly-off-0 1.2s cubic-bezier(0.15, 0.85, 0.2, 1) forwards;
+}
+.blade-piece.ejected-1 {
+  animation: fly-off-1 1.2s cubic-bezier(0.15, 0.85, 0.2, 1) forwards;
+}
+.blade-piece.ejected-2 {
+  animation: fly-off-2 1.2s cubic-bezier(0.15, 0.85, 0.2, 1) forwards;
+}
+.blade-piece.ejected-3 {
+  animation: fly-off-3 1.2s cubic-bezier(0.15, 0.85, 0.2, 1) forwards;
+}
+.blade-piece.ejected-4 {
+  animation: fly-off-4 1.2s cubic-bezier(0.15, 0.85, 0.2, 1) forwards;
+}
+
+@keyframes fly-off-0 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  25% { opacity: 1; }
+  100% { transform: translate(0, -950px) rotate(520deg) scale(0.7); opacity: 0; }
+}
+
+@keyframes fly-off-1 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  25% { opacity: 1; }
+  100% { transform: translate(900px, -450px) rotate(640deg) scale(0.7); opacity: 0; }
+}
+
+@keyframes fly-off-2 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  25% { opacity: 1; }
+  100% { transform: translate(700px, 900px) rotate(580deg) scale(0.7); opacity: 0; }
+}
+
+@keyframes fly-off-3 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  25% { opacity: 1; }
+  100% { transform: translate(-700px, 900px) rotate(-580deg) scale(0.7); opacity: 0; }
+}
+
+@keyframes fly-off-4 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  25% { opacity: 1; }
+  100% { transform: translate(-900px, -450px) rotate(-640deg) scale(0.7); opacity: 0; }
+}
+
+/* Explosion FX graphics */
+.explosion-fx.active {
+  display: block !important;
+}
+
+.explosion-fx.active .fx-shockwave {
+  animation: shockwave-ring 0.8s forwards ease-out;
+}
+
+@keyframes shockwave-ring {
+  0% { r: 40; stroke: #ffffff; stroke-width: 16; opacity: 1; fill: #ffe066; }
+  40% { r: 160; stroke: #ff3b30; stroke-width: 8; opacity: 0.85; fill: rgba(255, 60, 0, 0.3); }
+  100% { r: 320; stroke: #ff8533; stroke-width: 0; opacity: 0; fill: transparent; }
+}
+
+.explosion-fx.active .fx-blast-fire {
+  animation: blast-star 0.7s forwards ease-out;
+}
+
+@keyframes blast-star {
+  0% { transform: scale(0.2); transform-origin: 400px 400px; fill: #ffffff; }
+  45% { transform: scale(1.4); transform-origin: 400px 400px; fill: #ff2200; }
+  100% { transform: scale(1.8); transform-origin: 400px 400px; fill: #331100; opacity: 0; }
+}
+
+/* Scorched Broken Motor Core */
+.scorched-motor {
+  display: none;
+}
+
+.scorched-motor.active {
+  display: block !important;
+  animation: scorched-smoke 0.5s infinite alternate ease-in-out;
+}
+
+@keyframes scorched-smoke {
+  from { filter: drop-shadow(0 0 6px #ff3b30) drop-shadow(0 0 14px rgba(255, 80, 0, 0.5)); }
+  to { filter: drop-shadow(0 0 12px #ff3b30) drop-shadow(0 0 24px rgba(255, 80, 0, 0.8)); }
+}
+
+/* Repair Banner */
+.repair-banner {
+  position: absolute;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 12, 16, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 20px;
+  animation: toast-slide-in 0.4s ease-out;
+}
+
+.repair-banner.hidden {
+  display: none !important;
+}
+
+.repair-card {
+  background: rgba(26, 18, 22, 0.95);
+  border: 1.5px solid #ff3b30;
+  border-radius: 22px;
+  padding: 28px 32px;
+  max-width: 480px;
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 35px rgba(255, 59, 48, 0.35);
+}
+
+.repair-icon {
+  font-size: 3rem;
+  margin-bottom: 8px;
+  animation: camera-shake 0.3s infinite alternate ease-in-out;
+}
+
+.repair-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #ff453a;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.repair-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-bottom: 20px;
+}
+
+.btn-repair {
+  background: linear-gradient(135deg, #00e676, #00b0ff);
+  border: none;
+  color: #0b0d11;
+  font-family: var(--font-main);
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  padding: 12px 28px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 230, 118, 0.4);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: var(--trans-smooth);
+}
+
+.btn-repair:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 28px rgba(0, 230, 118, 0.65);
+}
+
+.repair-wrench {
+  font-size: 1.2rem;
+}
+
+/* Overkill Banner */
+.overkill-banner {
+  position: absolute;
+  top: 72px;
+  z-index: 45;
+  background: linear-gradient(90deg, #ff1a1a, #ff6600, #ff1a1a);
+  background-size: 200% 100%;
+  animation: banner-flow 1.5s linear infinite;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 6px 20px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 25px var(--turbo-glow), 0 4px 15px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transform: translateY(-12px) scale(0.95);
+  transition: var(--trans-smooth);
+  pointer-events: none;
+}
+
+.overkill-banner.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@keyframes banner-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Canvas Wind Streaks */
+#wind-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ==========================================================================
+   3. Ceiling Fan Visual Assembly & Pull Chains
+   ========================================================================== */
+.fan-wrapper {
+  position: relative;
+  width: min(84vh, 84vw, 560px);
+  height: min(84vh, 84vw, 560px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  margin-top: -30px;
+}
+
+#fan-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.35));
+  overflow: visible;
+}
+
+/* Interactive Hanging Pull-Chains */
+.pull-chain-container {
+  position: absolute;
+  top: 52%;
+  left: 50%;
+  width: 130px;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.pull-chain {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.1s ease-out;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45));
+}
+
+.pull-chain:hover {
+  transform: translateY(4px);
+}
+
+.pull-chain:hover .fob {
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+}
+
+.chain-cord {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: -2px;
+}
+
+.bead {
+  width: 5.5px;
+  height: 5.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff2c2, #b8860b 70%, #5d4007);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.fob {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffd978, #b8860b 80%, #684a08);
+  border: 1.5px solid #ffe39a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  transition: var(--trans-smooth);
+}
+
+.chain-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 5px;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  backdrop-filter: blur(4px);
+  opacity: 0.8;
+}
+
+/* Pull Animation Keyframes (elastic bounce recoil) */
+.chain-pull-anim {
+  animation: chain-jerk 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes chain-jerk {
+  0% { transform: translateY(0); }
+  35% { transform: translateY(28px); }
+  65% { transform: translateY(-6px); }
+  85% { transform: translateY(3px); }
+  100% { transform: translateY(0); }
+}
+
+/* ==========================================================================
+   4. Funny Thoughts Ticker
+   ========================================================================== */
+.ticker-wrapper {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 20;
+  padding: 0 16px;
+}
+
+.ticker-bubble {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(18, 22, 28, 0.82);
+  border: 1px solid var(--panel-border);
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  pointer-events: auto;
+}
+
+.ticker-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  background: rgba(0, 229, 255, 0.18);
+  color: var(--primary-accent);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.ticker-text {
+  font-size: 0.85rem;
+  color: var(--text-main);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ticker-text.fade-out {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+/* ==========================================================================
+   5. Glassmorphism Control Dashboard (Dock)
+   ========================================================================== */
+.control-panel {
+  position: relative;
+  z-index: 40;
+  background: var(--panel-bg);
+  border-top: 1px solid var(--panel-border);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  padding: 16px 24px 14px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.4);
+}
+
+/* Metrics Row */
+.meters-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 860px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.meter-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-card);
+  padding: 10px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  min-width: 0;
+  transition: var(--trans-smooth);
+}
+
+.meter-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.07em;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.meter-value-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.meter-number {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #ffffff;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.meter-number.mono {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  letter-spacing: 0.02em;
+}
+
+.meter-unit {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--primary-accent);
+}
+
+/* Thermometer Gauge Indicator */
+.thermometer-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-pill);
+  margin-top: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.thermometer-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, #00e5ff, #00e676);
+  transition: width 0.35s ease, background 0.4s ease, box-shadow 0.4s ease;
+}
+
+.temp-warm .thermometer-fill {
+  background: linear-gradient(90deg, #00e676, #ffd600);
+}
+
+.temp-hot .thermometer-fill {
+  background: linear-gradient(90deg, #ffd600, #ff9100);
+  box-shadow: 0 0 6px rgba(255, 145, 0, 0.6);
+}
+
+.temp-critical .thermometer-fill {
+  background: linear-gradient(90deg, #ff9100, #ff1744);
+  box-shadow: 0 0 10px #ff1744;
+}
+
+.temp-critical#temp-meter-card {
+  animation: temp-danger-pulse 0.45s infinite alternate ease-in-out;
+  border-color: rgba(255, 23, 68, 0.75);
+}
+
+@keyframes temp-danger-pulse {
+  from {
+    box-shadow: 0 0 8px rgba(255, 23, 68, 0.25);
+    background: rgba(255, 23, 68, 0.08);
+  }
+  to {
+    box-shadow: 0 0 20px rgba(255, 23, 68, 0.65);
+    background: rgba(255, 23, 68, 0.22);
+  }
+}
+
+/* Interactive Controls Main Row */
+.controls-main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  max-width: 820px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Primary Button Styling */
+.btn-ctrl {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--panel-border);
+  color: var(--text-main);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-main);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: var(--trans-smooth);
+}
+
+.btn-ctrl:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.btn-ctrl:active {
+  transform: translateY(2px);
+}
+
+/* Power Button */
+.btn-power {
+  padding: 9px 18px;
+  font-size: 0.88rem;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.btn-power.on {
+  background: rgba(0, 229, 255, 0.16);
+  border-color: rgba(0, 229, 255, 0.45);
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.25);
+}
+
+.btn-power.on .power-icon {
+  color: var(--primary-accent);
+  text-shadow: 0 0 10px var(--primary-accent);
+}
+
+.power-icon {
+  font-size: 1.1rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* Step - / + Buttons */
+.btn-step {
+  width: 38px;
+  height: 38px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: 50%;
+}
+
+/* Speed Preset Pills Segmented Bar */
+.speed-presets {
+  display: flex;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  gap: 2px;
+}
+
+.speed-pill {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-main);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: var(--trans-smooth);
+}
+
+.speed-pill:hover {
+  color: #ffffff;
+}
+
+.speed-pill.active {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Turbo Pill Special Accent */
+.speed-pill.turbo-pill.active {
+  background: linear-gradient(135deg, #ff3b30, #ff8533);
+  color: #ffffff;
+  box-shadow: 0 0 14px var(--turbo-glow);
+  font-weight: 800;
+}
+
+/* LED Mood Pill Controls */
+.buttons-led {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.led-control-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.led-presets {
+  display: flex;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  gap: 2px;
+}
+
+.led-pill {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-main);
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: var(--trans-smooth);
+  white-space: nowrap;
+}
+
+.led-pill:hover {
+  color: #ffffff;
+}
+
+.led-pill.active {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.led-pill.rgb-pill.active {
+  background: linear-gradient(90deg, #ff007f, #9900ff, #00f0ff, #00ff66);
+  background-size: 200% 100%;
+  animation: banner-flow 2s linear infinite;
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+}
+
+/* Light & Reset Buttons */
+.btn-light {
+  padding: 9px 16px;
+  font-size: 0.84rem;
+}
+
+.btn-light.active {
+  background: rgba(255, 215, 0, 0.16);
+  border-color: rgba(255, 215, 0, 0.4);
+  color: #fff2a8;
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.2);
+}
+
+.btn-reset {
+  padding: 9px 15px;
+  font-size: 0.84rem;
+}
+
+.btn-icon {
+  font-size: 0.95rem;
+}
+
+/* Bottom Acknowledgement & Lifetime Stats */
+.panel-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  max-width: 820px;
+  margin: 0 auto;
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 10px;
+}
+
+.useless-quote {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.total-runtime {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.total-runtime strong {
+  font-family: var(--font-mono);
+  color: var(--primary-accent);
+}
+
+/* ==========================================================================
+   6. Achievements Toast System
+   ========================================================================== */
+.toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.achievement-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(22, 27, 34, 0.92);
+  border: 1px solid rgba(255, 215, 0, 0.45);
+  padding: 12px 18px;
+  border-radius: var(--radius-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.2);
+  animation: toast-slide-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  min-width: 280px;
+  max-width: 360px;
+}
+
+.achievement-toast.toast-fade-out {
+  animation: toast-slide-out 0.45s forwards ease-in;
+}
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(60px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toast-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(60px) scale(0.9);
+  }
+}
+
+.toast-icon {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 2px 8px rgba(255, 215, 0, 0.5));
+}
+
+.toast-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.toast-heading {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #ffd700;
+}
+
+.toast-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.toast-desc {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   7. Achievements Modal Drawer
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  padding: 20px;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: rgba(22, 27, 34, 0.95);
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 540px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+  transform: scale(0.95);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-overlay.open .modal-content {
+  transform: scale(1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.modal-header h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: var(--trans-smooth);
+}
+
+.modal-close-btn:hover {
+  color: #ffffff;
+}
+
+.modal-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+}
+
+.achievements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.achievements-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.achievements-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+.achievement-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.03);
+  transition: var(--trans-smooth);
+}
+
+.achievement-card.unlocked {
+  background: rgba(255, 215, 0, 0.06);
+  border-color: rgba(255, 215, 0, 0.25);
+}
+
+.achievement-card.locked {
+  opacity: 0.55;
+  filter: grayscale(0.8);
+}
+
+.card-icon {
+  font-size: 1.6rem;
+}
+
+.card-info {
+  flex: 1;
+}
+
+.card-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-time {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: #ffd700;
+  background: rgba(255, 215, 0, 0.12);
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+}
+
+.card-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   8. Responsive & Mobile Optimizations
+   ========================================================================== */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 10px 14px;
+  }
+
+  .main-title {
+    font-size: 1.05rem;
+    gap: 5px;
+  }
+
+  .subtitle {
+    font-size: 0.68rem;
+  }
+
+  .action-btn {
+    padding: 6px 10px;
+    font-size: 0.78rem;
+  }
+
+  .fan-wrapper {
+    width: min(60vw, 60vh, 340px);
+    height: min(60vw, 60vh, 340px);
+    margin-top: -10px;
+  }
+
+  .pull-chain-container {
+    width: 96px;
+  }
+
+  .fob {
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+  }
+
+  .chain-tag {
+    font-size: 0.58rem;
+    padding: 1px 4px;
+  }
+
+  .ticker-wrapper {
+    bottom: 12px;
+    padding: 0 10px;
+  }
+
+  .ticker-bubble {
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    max-width: 100%;
+    gap: 8px;
+  }
+
+  .ticker-badge {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+  }
+
+  .ticker-text {
+    font-size: 0.74rem;
+  }
+
+  .control-panel {
+    padding: 10px 10px 8px 10px;
+    gap: 8px;
+  }
+
+  .meters-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .meter-card {
+    padding: 6px 2px;
+    min-width: 0;
+    border-radius: 9px;
+  }
+
+  .meter-label {
+    font-size: 0.48rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .meter-number {
+    font-size: 1.05rem;
+  }
+
+  .meter-number.mono {
+    font-size: 0.95rem;
+  }
+
+  .thermometer-track {
+    height: 4px;
+    margin-top: 4px;
+  }
+
+  .repair-card {
+    padding: 20px 16px;
+    max-width: 92%;
+  }
+
+  .repair-title {
+    font-size: 1.15rem;
+  }
+
+  .repair-subtitle {
+    font-size: 0.76rem;
+  }
+
+  .meter-number.mono {
+    font-size: 1.05rem;
+  }
+
+  .meter-unit {
+    font-size: 0.7rem;
+  }
+
+  .controls-main {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .buttons-secondary {
+    width: 100%;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .buttons-primary {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .btn-power, .btn-light, .btn-reset {
+    padding: 6px 12px;
+    font-size: 0.78rem;
+  }
+
+  .btn-step {
+    width: 32px;
+    height: 32px;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .speed-presets {
+    padding: 2px;
+    gap: 2px;
+    flex-shrink: 1;
+  }
+
+  .speed-pill {
+    padding: 5px 7px;
+    font-size: 0.7rem;
+    letter-spacing: 0;
+  }
+
+  .buttons-led {
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .led-control-label {
+    font-size: 0.58rem;
+  }
+
+  .led-presets {
+    padding: 2px;
+    gap: 1px;
+  }
+
+  .led-pill {
+    padding: 4px 6px;
+    font-size: 0.65rem;
+  }
+
+  .panel-footer {
+    flex-direction: column;
+    gap: 2px;
+    text-align: center;
+    font-size: 0.68rem;
+    padding-top: 6px;
+  }
+
+  .useless-quote {
+    font-size: 0.66rem;
+  }
+}
+
+@media (max-height: 640px) {
+  .fan-wrapper {
+    width: min(48vh, 240px);
+    height: min(48vh, 240px);
+  }
+  .ticker-wrapper {
+    bottom: 6px;
+  }
+  .control-panel {
+    padding: 6px 10px;
+    gap: 5px;
+  }
+}
